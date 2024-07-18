@@ -36,7 +36,7 @@ const BlankLayoutWithAppBar = (props: BlankLayoutWithAppBarProps) => {
 
   return (
     <BlankLayoutWithAppBarWrapper>
-      <AppBar />
+      {/* <AppBar /> */}
       <Box
         className='app-content'
         sx={{

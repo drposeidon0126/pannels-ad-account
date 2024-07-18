@@ -34,6 +34,8 @@ app.use(cors());
 
 
 app.use("/api/users", require("./routes/api/users"));
+app.use("/api/accounts", require("./routes/api/accounts"));
+app.use("/api/balances", require("./routes/api/balances"));
 
 app.use(express.static("resources/assets"));
 // Serve static assets in production

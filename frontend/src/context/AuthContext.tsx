@@ -40,7 +40,6 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      console.log(storedToken, 'storedToken')
       setLoading(false)
       if (storedToken) {
         setLoading(true)
@@ -52,7 +51,7 @@ const AuthProvider = ({ children }: Props) => {
           })
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data.user, role: 'admin' })
+            setUser({ ...response.data.user })
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -82,7 +81,7 @@ const AuthProvider = ({ children }: Props) => {
           : null
         const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.user, role: 'admin' })
+        setUser({ ...response.data.user })
         params.rememberMe
           ? window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
           : null
@@ -104,7 +103,7 @@ const AuthProvider = ({ children }: Props) => {
         window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
         const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.user, role: 'admin' })
+        setUser({ ...response.data.user })
         window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
 
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'

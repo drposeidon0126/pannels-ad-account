@@ -6,12 +6,16 @@ import chat from 'src/store/apps/chat'
 import user from 'src/store/apps/user'
 import email from 'src/store/apps/email'
 import invoice from 'src/store/apps/invoice'
+import accounts from './apps/accounts'
+import balance from './apps/balance'
 import calendar from 'src/store/apps/calendar'
 import permissions from 'src/store/apps/permissions'
 
 export const store = configureStore({
   reducer: {
     user,
+    accounts,
+    balance,
     chat,
     email,
     invoice,

@@ -83,8 +83,15 @@ const OptionsMenu = (props: OptionsMenuType) => {
         {options.map((option: OptionType, index: number) => {
           if (typeof option === 'string') {
             return (
-              <MenuItem key={index} onClick={handleClose}>
-                {option}
+              <MenuItem
+                key={index}
+                selected={option === 'Pyxis'}
+                onClick={e => {
+                  option.onClick && option.onClick(e) // Call onClick function if exists
+                  handleClose() // Close the menu after selection
+                }}
+              >
+                {option.text}
               </MenuItem>
             )
           } else if ('divider' in option) {

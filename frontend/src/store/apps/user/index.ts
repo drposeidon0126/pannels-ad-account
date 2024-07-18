@@ -1,25 +1,27 @@
 // ** Redux Imports
 import { Dispatch } from 'redux'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import apiConfig from 'src/configs/env'
 
 // ** Axios Imports
 import axios from 'axios'
 
 interface DataParams {
   q: string
-  role: string
-  status: string
-  currentPlan: string
+  // role: string
+  // status: string
+  // currentPlan: string
 }
 
 interface Redux {
   getState: any
   dispatch: Dispatch<any>
 }
+const API = apiConfig.API
 
 // ** Fetch Users
-export const fetchData = createAsyncThunk('appUsers/fetchData', async (params: DataParams) => {
-  const response = await axios.get('/apps/users/list', {
+export const getUsers = createAsyncThunk('appUsers/getUsers', async (params: DataParams) => {
+  const response = await axios.get(`${API}/api/users/list`, {
     params
   })
 
@@ -30,23 +32,31 @@ export const fetchData = createAsyncThunk('appUsers/fetchData', async (params: D
 export const addUser = createAsyncThunk(
   'appUsers/addUser',
   async (data: { [key: string]: number | string }, { getState, dispatch }: Redux) => {
-    const response = await axios.post('/apps/users/add-user', {
+    const response = await axios.post(`${API}/api/users/`, {
       data
     })
-    dispatch(fetchData(getState().user.params))
-
+    dispatch(getUsers(getState().user.params))
     return response.data
   }
 )
 
+//** Update User */
+export const upateUser = createAsyncThunk(
+  'appUsers/upateUser',
+  async (data: { [key: string]: number | string }, { getState, dispatch }: Redux) => {
+    const response = await axios.put(`${API}/api/users/`, {
+      data
+    })
+    dispatch(getUsers(getState().user.params))
+    return response.data
+  }
+)
 // ** Delete User
 export const deleteUser = createAsyncThunk(
   'appUsers/deleteUser',
   async (id: number | string, { getState, dispatch }: Redux) => {
-    const response = await axios.delete('/apps/users/delete', {
-      data: id
-    })
-    dispatch(fetchData(getState().user.params))
+    const response = await axios.delete(`${API}/api/users/${id}`)
+    dispatch(getUsers(getState().user.params))
 
     return response.data
   }
@@ -62,7 +72,7 @@ export const appUsersSlice = createSlice({
   },
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
+    builder.addCase(getUsers.fulfilled, (state, action) => {
       state.data = action.payload.users
       state.total = action.payload.total
       state.params = action.payload.params

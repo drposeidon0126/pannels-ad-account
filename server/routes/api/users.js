@@ -25,14 +25,83 @@ const User = require("../../models/User");
 // @route POST api/users/register
 // @desc Register user
 // @access Public
+// router.post("/", async (req, res) => {
+//   //const { name, email, password } = req.body;
+
+//   const { username, email, password } = req.body;
+
+//   try {
+//     let user = await User.findOne({ email });
+
+//     if (user) {
+//       return res.status(400).json({ email: "User already exists" });
+//     }
+//     let state = "In-Active";
+//     user = new User({
+//       username,
+//       email,
+//       password,
+//     });
+
+//     //if (email === 'superadmin@playestates.com') user.user_status = 'Active';
+
+//     const salt = await bcrypt.genSalt(10);
+
+//     user.password = await bcrypt.hash(password, salt);
+
+//     await user.save();
+//     const payload = {
+//       user: {
+//         _id: user._id,
+//         username: user.name,
+//         email: user.email,
+//         password: user.password,
+//         role: user.role,
+//       },
+//     };
+//     console.log(config.get("secretOrKey"));
+//     jwt.sign(
+//       payload,
+//       config.get("secretOrKey"),
+//       { expiresIn: 360000 },
+//       (err, token) => {
+//         if (err) throw err;
+//         return res.json({
+//           success: true,
+//           access_token: "Bearer " + token,
+//           refresh_token: "Bearer " + token,
+//           user: {
+//             _id: user._id,
+//             username: user.name,
+//             email: user.email,
+//             password: user.password,
+//             role: user.role,
+//           },
+//         });
+//       }
+//     );
+//   } catch (err) {
+//     if (err.message) {
+//       res.status(500).send("Server error");
+//     } else {
+//       res.status(500).send(err.message);
+//     }
+//   }
+// });
 router.post("/", async (req, res) => {
   //const { name, email, password } = req.body;
-
   const {
     username,
     email,
     password,
-  } = req.body;
+    role,
+    phonenumber,
+    companyanme,
+    country,
+    monthlyadspend,
+    goals,
+    adplatformt,
+  } = req.body.data;
 
   try {
     let user = await User.findOne({ email });
@@ -44,7 +113,14 @@ router.post("/", async (req, res) => {
     user = new User({
       username,
       email,
-      password, 
+      password,
+      role,
+      phonenumber,
+      companyanme,
+      country,
+      monthlyadspend,
+      goals,
+      adplatformt,
     });
 
     //if (email === 'superadmin@playestates.com') user.user_status = 'Active';
@@ -57,9 +133,16 @@ router.post("/", async (req, res) => {
     const payload = {
       user: {
         _id: user._id,
-        username: user.name,
+        username: user.username,
         email: user.email,
         password: user.password,
+        role: user.role,
+        phonenumber: user.phonenumber,
+        companyanme: user.companyanme,
+        country: user.country,
+        monthlyadspend: user.monthlyadspend,
+        goals: user.goals,
+        adplatformt: user.adplatformt,
       },
     };
     console.log(config.get("secretOrKey"));
@@ -75,21 +158,28 @@ router.post("/", async (req, res) => {
           refresh_token: "Bearer " + token,
           user: {
             _id: user._id,
-            username: user.name,
+            username: user.username,
             email: user.email,
             password: user.password,
+            role: user.role,
+            phonenumber: user.phonenumber,
+            companyanme: user.companyanme,
+            country: user.country,
+            monthlyadspend: user.monthlyadspend,
+            goals: user.goals || "",
+            adplatformt: user.adplatformt,
           },
         });
       }
     );
   } catch (err) {
-
-    if(err.message) {
+    if (err.message) {
       res.status(500).send("Server error");
+      console.log(err);
     } else {
       res.status(500).send(err.message);
+      console.log(err);
     }
-    
   }
 });
 
@@ -119,6 +209,7 @@ router.post("/login", validateLoginInput(), async (req, res) => {
         username: user.name,
         email: user.email,
         password: user.password,
+        role: user.role,
       },
     };
 
@@ -136,6 +227,7 @@ router.post("/login", validateLoginInput(), async (req, res) => {
             username: user.name,
             email: user.email,
             password: user.password,
+            role: user.role,
           },
         });
       }
@@ -162,8 +254,31 @@ router.get("/me", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+router.get("/list", async (req, res) => {
+  const { q } = req.query; // Get the search query parameter
 
-router.delete("/:id", auth, async (req, res) => {
+  try {
+    // Adjusted search condition to also filter out users with admin role
+    const searchCondition = {
+      ...(q
+        ? { username: new RegExp(q, "i"), fullname: new RegExp(q, "i") }
+        : {}),
+      role: { $ne: "admin" }, // Assuming 'role' is a field in your User schema
+    };
+
+    // Find balances matching the search condition and populate the 'user' field
+    const users = await User.find(searchCondition);
+
+    return res.json({
+      users: users,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.delete("/:id", async (req, res) => {
   try {
     await User.findOneAndDelete({ _id: req.params.id });
     res.json({
@@ -188,47 +303,100 @@ router.get("/:id/user", auth, async (req, res) => {
   }
 });
 
+
 router.put("/", async (req, res) => {
+  console.log(req.body.data, "data")
   const {
     _id,
-    name,
+    username,
     email,
-    phone,
-    address,
-  } = req.body.user;
+    password,
+    role,
+    phonenumber,
+    companyanme,
+    country,
+    monthlyadspend,
+    goals,
+    adplatformt,
+  } = req.body.data;
   try {
     let user = await User.findById(_id);
     if (user) {
-      user.name = name;
+      user.username = username;
       user.email = email;
-      user.phone = phone;
-      user.address = address;
-      if (req.files[0]) user.profile_image = req.files[0].filename;
+      user.password = password;
+      user.role = role;
+      user.phonenumber = phonenumber;
+      user.companyanme = companyanme;
+      user.country = country;
+      user.monthlyadspend = monthlyadspend;
+      user.goals = goals;
+      user.adplatformt = adplatformt;
+
       await user.save();
+      const payload = {
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          password: user.password,
+          role: user.role,
+          phonenumber: user.phonenumber,
+          companyanme: user.companyanme,
+          country: user.country,
+          monthlyadspend: user.monthlyadspend,
+          goals: user.goals,
+          adplatformt: user.adplatformt,
+        },
+      };
+      console.log(config.get("secretOrKey"));
+      jwt.sign(
+        payload,
+        config.get("secretOrKey"),
+        { expiresIn: 360000 },
+        (err, token) => {
+          if (err) throw err;
+          return res.json({
+            success: true,
+            access_token: "Bearer " + token,
+            refresh_token: "Bearer " + token,
+            user: {
+              _id: user._id,
+              username: user.username,
+              email: user.email,
+              password: user.password,
+              role: user.role,
+              phonenumber: user.phonenumber,
+              companyanme: user.companyanme,
+              country: user.country,
+              monthlyadspend: user.monthlyadspend,
+              goals: user.goals || "",
+              adplatformt: user.adplatformt,
+            },
+          });
+        }
+      );
     }
-    return res.json({
-      success: true,
-      user: user,
-    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
   }
 });
 
-
-
 //send email
 router.post("/sendEmail", auth, async (req, res) => {
-  const client = mailgun.client({ username: "api", key: 'e9b6048b2297fb019b2f6c4d492aff36-28e9457d-ee1210e1' });
+  const client = mailgun.client({
+    username: "api",
+    key: "e9b6048b2297fb019b2f6c4d492aff36-28e9457d-ee1210e1",
+  });
   const messageData = {
     from: req.body.from,
     to: req.body.to,
     subject: req.body.subject,
-    text: req.body.text
+    text: req.body.text,
   };
   client.messages
-    .create('sandboxa212c18a6f5b45ad96fb1d9819faccdc.mailgun.org', messageData)
+    .create("sandboxa212c18a6f5b45ad96fb1d9819faccdc.mailgun.org", messageData)
     .then((res) => {
       console.log(res);
     })
@@ -236,6 +404,5 @@ router.post("/sendEmail", auth, async (req, res) => {
       console.error(err);
     });
 });
-
 
 module.exports = router;

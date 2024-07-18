@@ -1,47 +1,47 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Create Schema
-const UserSchema = new Schema({
-  username: {
+const AccountSchema = new Schema({
+  id: {
+    type: Number,
+    required: true,
+  },
+  bmId: {
     type: String,
     required: true,
   },
-  email: {
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  name: {
     type: String,
     required: true,
   },
-  password: {
+  platform: {
+    type: String,
+    required: true,
+  },
+  timezone: {
     type: String,
   },
-
-  phonenumber: {
+  facebookOne: {
     type: String,
   },
-  companyanme: {
+  facebookTwo: {
     type: String,
   },
-  country: {
+  currency: {
+    type: String,
+    default: "usd",
+  },
+  link: {
     type: String,
   },
-  monthlyadspend: {
+  status: {
     type: String,
-  },
-  goals: {
-    type: String,
-  },
-  adplatformt: {
-    type: String,
-  },
-  profile_image: {
-    type: String,
-  },
-  role: {
-    type: String,
-    default: "client",
-  },
-  last_login: {
-    type: Date,
+    default: "Submitted",
   },
   created_at: {
     type: Date,
@@ -57,4 +57,4 @@ const UserSchema = new Schema({
   },
 });
 
-module.exports = User = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("Account", AccountSchema);

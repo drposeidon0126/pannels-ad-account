@@ -5,16 +5,17 @@ export type UsersType = {
   id: number
   role: string
   email: string
+  password: string
   status: string
-  avatar: string
-  billing: string
-  company: string
-  country: string
-  contact: string
-  fullName: string
+  phonenumber: string
+  fullname: string
+  companyanme: string
+  companyregion: string
+  monthlyadspend: string
+  goals: string
   username: string
-  currentPlan: string
-  avatarColor?: ThemeColor
+  adplatform: string
+  profile_image?: ThemeColor
 }
 
 export type ProjectListDataType = {

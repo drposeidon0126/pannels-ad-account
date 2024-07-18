@@ -1,5 +1,6 @@
 // ** React Imports
 import { ReactNode, useState } from 'react'
+import { signIn } from 'next-auth/react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -154,7 +155,7 @@ const Register = () => {
         <Card>
           <CardContent sx={{ p: `${theme.spacing(8, 8, 7)} !important` }}>
             <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width={22} height={32} viewBox='0 0 55 81' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              {/* <svg width={22} height={32} viewBox='0 0 55 81' fill='none' xmlns='http://www.w3.org/2000/svg'>
                 <path
                   fill={theme.palette.primary.main}
                   d='M30.1984 0.0144043C24.8945 0.425781 25.2534 6.16968 26.6435 7.65326C22.693 10.3649 13.1875 16.8867 6.76944 21.2803C1.21531 25.0824 -0.842975 34.6064 1.11159 40.8262C3.00952 46.8658 12.4904 51.3615 17.5337 52.7256C17.5337 52.7256 11.7188 56.0269 6.60358 60.0482C1.48831 64.0695 -0.622615 69.3436 3.06836 75.262C6.75933 81.1805 12.725 80.761 17.5257 78.6229C22.3264 76.4848 32.1683 69.1692 37.9402 65.1633C42.7282 61.5411 43.9669 53.6444 41.7631 46.9643C39.9758 41.5468 30.0969 36.4284 25.1792 34.6064C27.1946 33.1595 32.4935 29.4242 37.129 26.0909C38.7184 30.5636 43.9998 30.212 45.6103 27.8209C47.6216 23.4326 51.8339 13.4663 53.9579 8.55175C54.8862 4.81044 52.5639 2.78457 50.2227 2.35938C46.8672 1.75 38.3222 0.960115 30.1984 0.0144043Z'
@@ -169,8 +170,10 @@ const Register = () => {
                   fill={theme.palette.common.white}
                   d='M17.543 52.7266C21.2241 53.9875 28.5535 57.0509 30.091 59.101C32.0129 61.6635 33.1576 64.34 29.2527 71.2039C28.5954 71.6481 27.9821 72.0633 27.4069 72.4528C22.1953 75.9817 20.1085 77.3946 16.6243 79.0531C13.5855 80.2464 6.61575 81.7103 2.66559 74.5653C-1.11764 67.7222 3.23818 62.7113 6.5963 60.065L12.1695 56.0339L14.8359 54.3477L17.543 52.7266Z'
                 />
-              </svg>
-              <Typography
+              </svg> */}
+              <img src='/images/uproas-logo-white1.svg' style={{ width: '70%' }} />
+
+              {/* <Typography
                 variant='h5'
                 sx={{
                   ml: 2,
@@ -182,14 +185,14 @@ const Register = () => {
                 }}
               >
                 {themeConfig.templateName}
-              </Typography>
+              </Typography> */}
             </Box>
             <Typography variant='h6' sx={{ mb: 1.5 }}>
-              Sign up to Rockads
+              Sign up to {themeConfig.templateName}
             </Typography>
-            <Typography sx={{ mb: 6, color: 'text.secondary' }}>
+            {/* <Typography sx={{ mb: 6, color: 'text.secondary' }}>
               Rockads is not platform. It is a focused partner to grow your business
-            </Typography>
+            </Typography> */}
             <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
               <TextField
                 autoFocus
@@ -274,7 +277,7 @@ const Register = () => {
               </Box>
               <Divider sx={{ my: `${theme.spacing(6)} !important` }}>or</Divider>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IconButton href='/' component={Link} sx={{ color: '#497ce2' }} onClick={e => e.preventDefault()}>
+                {/* <IconButton href='/' component={Link} sx={{ color: '#497ce2' }} onClick={e => e.preventDefault()}>
                   <Icon icon='bxl:facebook-circle' />
                 </IconButton>
                 <IconButton href='/' component={Link} sx={{ color: '#1da1f2' }} onClick={e => e.preventDefault()}>
@@ -287,8 +290,16 @@ const Register = () => {
                   sx={{ color: theme.palette.mode === 'light' ? '#272727' : 'grey.300' }}
                 >
                   <Icon icon='bxl:github' />
-                </IconButton>
-                <IconButton href='/' component={Link} sx={{ color: '#db4437' }} onClick={e => e.preventDefault()}>
+                </IconButton> */}
+                <IconButton
+                  href='/'
+                  component={Link}
+                  sx={{ color: '#db4437' }}
+                  onClick={e => {
+                    e.preventDefault()
+                    signIn('google')
+                  }}
+                >
                   <Icon icon='bxl:google' />
                 </IconButton>
               </Box>
