@@ -38,7 +38,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    default: "client",
+    default: "lead",
   },
   last_login: {
     type: Date,

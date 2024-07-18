@@ -610,15 +610,15 @@ const defaultColumns: GridColDef[] = [
     renderCell: ({ row }: CellType) => {
       if (row.platform === 'meta') {
         return (
-          <IconContext.Provider value={{ size: '2em', color: 'blue' }}>
+          <IconContext.Provider value={{ size: '2em' }}>
             <div>
               <SiMeta />
             </div>
           </IconContext.Provider>
         )
-      } else if (row.platform === 'ticktok') {
+      } else if (row.platform === 'tiktok') {
         return (
-          <IconContext.Provider value={{ size: '2em', color: 'black' }}>
+          <IconContext.Provider value={{ size: '2em' }}>
             <div>
               <SiTiktok />
             </div>
@@ -636,14 +636,17 @@ const defaultColumns: GridColDef[] = [
     }
   },
   {
-    flex: 0.1,
+    flex: 0.2,
     field: 'name',
-    minWidth: 90,
-    headerName: 'ACCOUNT NAME'
+    minWidth: 150,
+    headerName: 'ACCOUNT NAME',
+    renderCell: ({ row }: CellType) => (
+      <Typography sx={{ color: 'text.secondary' }}>{`test.com#${String(row.name).padStart(4, '0')}`}</Typography>
+    )
   },
   {
-    flex: 0.1,
-    minWidth: 90,
+    flex: 0.3,
+    minWidth: 300,
     field: 'timezone',
     headerName: 'TIME ZONE',
     renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{`${row.timezone}`}</Typography>
@@ -726,11 +729,11 @@ const AdAccounts = () => {
   const [startDateRange, setStartDateRange] = useState<DateType>(null)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
   const [show, setShow] = useState<boolean>(false)
-  const [adplatform, setAdPlatform] = useState<'meta' | 'ticktok' | 'google'>('meta')
-  const [currency, setCurrency] = useState<'usd' | 'eur' | 'try'>('usd')
+  const [adplatform, setAdPlatform] = useState<'meta' | 'tiktok' | 'google'>('meta')
+  const [currency, setCurrency] = useState<'usd'>('usd')
   const [timeZone, setTimeZone] = useState<string>('')
   const [link, setLink] = useState<string>('')
-  const [accountName, setAccountName] = useState<string>('')
+  const [accountName, setAccountName] = useState<number>(1)
   const [nextStep, setNextStep] = useState<boolean>(false)
   const [bmId, setBmid] = useState<string>('')
   const [facebookPOne, setFacebookPOne] = useState<string>('')
@@ -784,6 +787,15 @@ const AdAccounts = () => {
 
   useEffect(() => {
     const API = apiConfig.API
+    axios
+      .get(`${API}/api/accounts/`, {
+        params: { q: value }
+      })
+      .then(res => {
+        if (res.data.accounts.length > 0) {
+          setAccountName(res.data.accounts[res.data.accounts.length - 1].name + 1)
+        }
+      })
     axios.get(`${API}/api/balances/`, {}).then(res => {
       if (res.data.balances.length > 0) {
         setPaymentCode(res.data.balances[res.data.balances.length - 1].paymentCode + 1)
@@ -1066,7 +1078,7 @@ const AdAccounts = () => {
                       }}
                     >
                       <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                        <IconContext.Provider value={{ size: '2em', color: 'blue' }}>
+                        <IconContext.Provider value={{ size: '2em' }}>
                           <div>
                             <SiMeta />
                           </div>
@@ -1079,30 +1091,27 @@ const AdAccounts = () => {
                   </Grid>
                   <Grid item sm={4} xs={12}>
                     <Box
-                      onClick={() => setAdPlatform('ticktok')}
+                      onClick={() => setAdPlatform('tiktok')}
                       sx={{
                         py: 3,
                         px: 4,
                         borderRadius: 1,
                         cursor: 'pointer',
-                        ...(adplatform === 'ticktok'
+                        ...(adplatform === 'tiktok'
                           ? { ...bgColors.primaryLight }
                           : { backgroundColor: 'action.hover' }),
                         border: theme =>
-                          `1px solid ${adplatform === 'ticktok' ? theme.palette.primary.main : theme.palette.divider}`
+                          `1px solid ${adplatform === 'tiktok' ? theme.palette.primary.main : theme.palette.divider}`
                       }}
                     >
                       <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                        <IconContext.Provider value={{ size: '2em', color: 'black' }}>
+                        <IconContext.Provider value={{ size: '2em' }}>
                           <div>
                             <SiTiktok />
                           </div>
                         </IconContext.Provider>
-                        <Typography
-                          variant='h6'
-                          sx={{ ...(adplatform === 'ticktok' ? { color: 'primary.main' } : {}) }}
-                        >
-                          Ticktok
+                        <Typography variant='h6' sx={{ ...(adplatform === 'tiktok' ? { color: 'primary.main' } : {}) }}>
+                          Tictok
                         </Typography>
                       </Box>
                     </Box>
@@ -1155,7 +1164,7 @@ const AdAccounts = () => {
                       </Box>
                     </Box>
                   </Grid>
-                  <Grid item sm={2} xs={12}>
+                  {/* <Grid item sm={2} xs={12}>
                     <Box
                       onClick={() => setCurrency('eur')}
                       sx={{
@@ -1194,15 +1203,16 @@ const AdAccounts = () => {
                         </Typography>
                       </Box>
                     </Box>
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
                       label='Account Name'
                       placeholder='Account Name'
-                      value={accountName}
-                      onChange={e => setAccountName(e.target.value)}
+                      value={`test.com#${String(accountName).padStart(4, '0')}`}
+                      // onChange={e => setAccountName(e.target.value)}
                       required
+                      disabled
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -1282,6 +1292,9 @@ const AdAccounts = () => {
             >
               {nextStep ? (
                 <>
+                  <Button variant='outlined' color='secondary' onClick={() => setNextStep(false)}>
+                    Previous
+                  </Button>
                   <Button
                     variant='contained'
                     sx={{ mr: 1 }}
@@ -1289,9 +1302,6 @@ const AdAccounts = () => {
                     disabled={!accountName || !timeZone || !link || !facebookPOne || !facebookPTwo || !bmId}
                   >
                     Submit
-                  </Button>
-                  <Button variant='outlined' color='secondary' onClick={() => setNextStep(false)}>
-                    Previous
                   </Button>
                 </>
               ) : (
@@ -1368,7 +1378,7 @@ const AdAccounts = () => {
                     }}
                   >
                     <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                      <IconContext.Provider value={{ size: '2em', color: 'blue' }}>
+                      <IconContext.Provider value={{ size: '2em' }}>
                         <div>
                           <SiMeta />
                         </div>
@@ -1387,7 +1397,7 @@ const AdAccounts = () => {
                     onClick={() =>
                       setUpdateAcc({
                         ...updateAcc,
-                        platform: 'ticktok'
+                        platform: 'tiktok'
                       })
                     }
                     sx={{
@@ -1395,26 +1405,26 @@ const AdAccounts = () => {
                       px: 4,
                       borderRadius: 1,
                       cursor: 'pointer',
-                      ...(updateAcc.platform === 'ticktok'
+                      ...(updateAcc.platform === 'tiktok'
                         ? { ...bgColors.primaryLight }
                         : { backgroundColor: 'action.hover' }),
                       border: theme =>
                         `1px solid ${
-                          updateAcc.platform === 'ticktok' ? theme.palette.primary.main : theme.palette.divider
+                          updateAcc.platform === 'tiktok' ? theme.palette.primary.main : theme.palette.divider
                         }`
                     }}
                   >
                     <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', '& svg': { mr: 2 } }}>
-                      <IconContext.Provider value={{ size: '2em', color: 'black' }}>
+                      <IconContext.Provider value={{ size: '2em' }}>
                         <div>
                           <SiTiktok />
                         </div>
                       </IconContext.Provider>
                       <Typography
                         variant='h6'
-                        sx={{ ...(updateAcc.platform === 'ticktok' ? { color: 'primary.main' } : {}) }}
+                        sx={{ ...(updateAcc.platform === 'tiktok' ? { color: 'primary.main' } : {}) }}
                       >
-                        Ticktok
+                        Tiktok
                       </Typography>
                     </Box>
                   </Box>
@@ -1487,7 +1497,7 @@ const AdAccounts = () => {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item sm={2} xs={12}>
+                {/* <Grid item sm={2} xs={12}>
                   <Box
                     onClick={() =>
                       setUpdateAcc({
@@ -1547,6 +1557,7 @@ const AdAccounts = () => {
                     </Box>
                   </Box>
                 </Grid>
+              */}
                 <Grid item xs={12}>
                   <FormControl fullWidth>
                     <InputLabel id='invoice-status-select'>Status</InputLabel>
@@ -1575,14 +1586,10 @@ const AdAccounts = () => {
                     fullWidth
                     label='Account Name'
                     placeholder='Account Name'
-                    value={updateAcc.name}
-                    onChange={e =>
-                      setUpdateAcc({
-                        ...updateAcc,
-                        name: e.target.value
-                      })
-                    }
+                    value={`test.com#${String(updateAcc.name).padStart(4, '0')}`}
+                    // onChange={e => setAccountName(e.target.value)}
                     required
+                    disabled
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -1675,11 +1682,12 @@ const AdAccounts = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
-              <Button variant='contained' sx={{ mr: 1 }} onClick={updateAds}>
-                Update
-              </Button>
+              {' '}
               <Button variant='outlined' color='secondary' onClick={() => setShowEdit(false)}>
                 Cancel
+              </Button>
+              <Button variant='contained' sx={{ mr: 1 }} onClick={updateAds}>
+                Update
               </Button>
             </DialogActions>
           </Dialog>
@@ -1876,7 +1884,7 @@ const AdAccounts = () => {
                     </span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Swift Code:
+                    BIC:
                     <span style={{ color: 'rgb(105 108 255)', float: 'right' }}>
                       {swiftCode}
                       <Tooltip title='Copy to clipboard'>
@@ -1897,14 +1905,18 @@ const AdAccounts = () => {
                     <span style={{ color: 'white', float: 'right' }}>${(topUpParas.amount * 0.96).toFixed(1)}</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Bank Address: <span style={{ color: 'white', float: 'right' }}>TURKIYEGARANTIBANKASIA.S</span>
+                    Intermeiary BIC: <span style={{ color: 'white', float: 'right' }}>CHASGB2L</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '55px' }}>
-                    Wise Address: <span style={{ color: 'white', float: 'right' }}>Rockads Reklam Anonim Sirketi</span>
+                    Recipient Address:{' '}
+                    <span style={{ color: 'white', float: 'right' }}>Parun Maantee 18, 10141, Tallinn, Estonia</span>
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
+                    Bank Address: <span style={{ color: 'white', float: 'right' }}></span>
                   </Typography>
 
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Rockads deos not make a direct debit form your account. You can make a <br />
+                    Uproas deos not make a direct debit form your account. You can make a <br />
                     money transfer for Rockads via internet banking or your bank's mobile <br />
                     application. Make sure that the account to which the transfer is made <br />
                     belongs to your company
@@ -1920,11 +1932,11 @@ const AdAccounts = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
-              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
-                I made the transfer
-              </Button>
               <Button variant='outlined' color='secondary' onClick={() => setIsContinueToUp(false)}>
                 Cancel
+              </Button>
+              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
+                I made the transfer
               </Button>
             </DialogActions>
           </Dialog>

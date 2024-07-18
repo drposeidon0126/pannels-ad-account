@@ -31,7 +31,7 @@ const navigation = (): VerticalNavItemsType => {
         sectionTitle: 'Mission Menu'
       },
       {
-        title: 'Ad Accounts',
+        title: 'Account Request',
         // icon: 'bx:user',
         path: '/apps/ad-accounts'
       },
@@ -634,7 +634,7 @@ const navigation = (): VerticalNavItemsType => {
         path: '/apps/admin/clients'
       },
       {
-        title: 'Ad Acc Requests',
+        title: 'Account Requests',
         // icon: 'bx:user',
         path: '/apps/admin/ad-accounts'
       },

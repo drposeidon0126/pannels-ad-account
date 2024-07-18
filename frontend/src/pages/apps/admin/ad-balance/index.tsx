@@ -192,7 +192,9 @@ const defaultColumns: GridColDef[] = [
     field: 'adacc',
     minWidth: 300,
     headerName: 'AD ACCOUNT',
-    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{`${row.accountName}`}</Typography>
+    renderCell: ({ row }: CellType) => (
+      <Typography sx={{ color: 'text.secondary' }}>{`test.com#${String(row.accountName).padStart(4, '0')}`}</Typography>
+    )
   },
   {
     flex: 0.1,
@@ -519,7 +521,7 @@ const AdBalances = () => {
                       required
                     >
                       {accounts.map((acc, i) => (
-                        <MenuItem value={acc._id}>{acc.name}</MenuItem>
+                        <MenuItem value={acc._id}>{`test.com#${String(acc.name).padStart(4, '0')}`}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -563,6 +565,9 @@ const AdBalances = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
+              <Button variant='outlined' color='secondary' onClick={() => setShowTopUpMpdal(false)}>
+                Cancel
+              </Button>
               <Button
                 variant='contained'
                 sx={{ mr: 1 }}
@@ -570,9 +575,6 @@ const AdBalances = () => {
                 disabled={!topUpParas.account || !topUpParas.amount}
               >
                 Continue
-              </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setShowTopUpMpdal(false)}>
-                Cancel
               </Button>
             </DialogActions>
           </Dialog>
@@ -666,7 +668,7 @@ const AdBalances = () => {
                     </span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Swift Code:
+                    BIC:
                     <span style={{ color: 'rgb(105 108 255)', float: 'right' }}>
                       {swiftCode}
                       <Tooltip title='Copy to clipboard'>
@@ -687,14 +689,18 @@ const AdBalances = () => {
                     <span style={{ color: 'white', float: 'right' }}>${(topUpParas.amount * 0.96).toFixed(1)}</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Bank Address: <span style={{ color: 'white', float: 'right' }}>TURKIYEGARANTIBANKASIA.S</span>
+                    Intermeiary BIC: <span style={{ color: 'white', float: 'right' }}>CHASGB2L</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '55px' }}>
-                    Wise Address: <span style={{ color: 'white', float: 'right' }}>Rockads Reklam Anonim Sirketi</span>
+                    Recipient Address:{' '}
+                    <span style={{ color: 'white', float: 'right' }}>Parun Maantee 18, 10141, Tallinn, Estonia</span>
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
+                    Bank Address: <span style={{ color: 'white', float: 'right' }}></span>
                   </Typography>
 
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Rockads deos not make a direct debit form your account. You can make a <br />
+                    Uproas deos not make a direct debit form your account. You can make a <br />
                     money transfer for Rockads via internet banking or your bank's mobile <br />
                     application. Make sure that the account to which the transfer is made <br />
                     belongs to your company
@@ -710,11 +716,11 @@ const AdBalances = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
-              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
-                I made the transfer
-              </Button>
               <Button variant='outlined' color='secondary' onClick={() => setIsContinueToUp(false)}>
                 Cancel
+              </Button>
+              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
+                I made the transfer
               </Button>
             </DialogActions>
           </Dialog>
@@ -779,19 +785,25 @@ const AdBalances = () => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label='Ad Account'
-                    placeholder='Ad AccountName'
-                    value={updateBal.accountName}
-                    onChange={e => {
-                      setUpdateBal({
-                        ...updateBal,
-                        accountName: e.target.value
-                      })
-                    }}
-                    required
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id='acc-select'>Add Account</InputLabel>
+                    <Select
+                      labelId='acc-select'
+                      defaultValue={updateBal.accountName}
+                      label='Ad Account'
+                      onChange={e => {
+                        setUpdateBal({
+                          ...updateBal,
+                          accountName: e.target.value
+                        })
+                      }}
+                      required
+                    >
+                      {accounts.map((acc, i) => (
+                        <MenuItem value={acc.name}>{`test.com#${String(acc.name).padStart(4, '0')}`}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -818,6 +830,9 @@ const AdBalances = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
+              <Button variant='outlined' color='secondary' onClick={() => setShowEdit(false)}>
+                Cancel
+              </Button>
               <Button
                 variant='contained'
                 sx={{ mr: 1 }}
@@ -825,9 +840,6 @@ const AdBalances = () => {
                 disabled={!updateBal.accountName || !updateBal.status}
               >
                 Update
-              </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setShowEdit(false)}>
-                Cancel
               </Button>
             </DialogActions>
           </Dialog>

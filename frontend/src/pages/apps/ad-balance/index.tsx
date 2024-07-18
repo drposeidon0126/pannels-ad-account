@@ -169,7 +169,9 @@ const defaultColumns: GridColDef[] = [
     field: 'adacc',
     minWidth: 300,
     headerName: 'AD ACCOUNT',
-    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{`${row.accountName}`}</Typography>
+    renderCell: ({ row }: CellType) => (
+      <Typography sx={{ color: 'text.secondary' }}>{`test.com#${String(row.accountName).padStart(4, '0')}`}</Typography>
+    )
   },
   {
     flex: 0.1,
@@ -236,10 +238,10 @@ const AdBalances = () => {
     total: '0'
   })
   const [isContinueToUp, setIsContinueToUp] = useState<boolean>(false)
-  const [paymentCode, setPaymentCode] = useState<string>('36500')
-  const [receiverName, setReceiverName] = useState<string>('Rockads Reklam Anonim Sirketi')
-  const [accNumber, setAccnumber] = useState<string>('TR09 0006 2000 4320 0090 0198 49')
-  const [swiftCode, setSwiftCode] = useState<string>('TGBATRISXXX')
+  const [paymentCode, setPaymentCode] = useState<string>('36501')
+  const [receiverName, setReceiverName] = useState<string>('Upras Ads OU')
+  const [accNumber, setAccnumber] = useState<string>('LT47 3250 0320 5017 9630')
+  const [swiftCode, setSwiftCode] = useState<string>('REVOLT21')
   const [accounts, setAccounts] = useState([])
   const [createdTopUp, setCreatedTopUp] = useState<boolean>(false)
   // ** Hooks
@@ -421,7 +423,7 @@ const AdBalances = () => {
                       required
                     >
                       {accounts.map((acc, i) => (
-                        <MenuItem value={acc._id}>{acc.name}</MenuItem>
+                        <MenuItem value={acc._id}>{`test.com#${String(acc.name).padStart(4, '0')}`}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -465,6 +467,9 @@ const AdBalances = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
+              <Button variant='outlined' color='secondary' onClick={() => setShowTopUpMpdal(false)}>
+                Cancel
+              </Button>
               <Button
                 variant='contained'
                 sx={{ mr: 1 }}
@@ -472,9 +477,6 @@ const AdBalances = () => {
                 disabled={!topUpParas.amount || !topUpParas.account}
               >
                 Continue
-              </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setShowTopUpMpdal(false)}>
-                Cancel
               </Button>
             </DialogActions>
           </Dialog>
@@ -568,7 +570,7 @@ const AdBalances = () => {
                     </span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Swift Code:
+                    BIC:
                     <span style={{ color: 'rgb(105 108 255)', float: 'right' }}>
                       {swiftCode}
                       <Tooltip title='Copy to clipboard'>
@@ -589,14 +591,18 @@ const AdBalances = () => {
                     <span style={{ color: 'white', float: 'right' }}>${(topUpParas.amount * 0.96).toFixed(1)}</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Bank Address: <span style={{ color: 'white', float: 'right' }}>TURKIYEGARANTIBANKASIA.S</span>
+                    Intermeiary BIC: <span style={{ color: 'white', float: 'right' }}>CHASGB2L</span>
                   </Typography>
                   <Typography sx={{ color: 'text.secondary', marginBottom: '55px' }}>
-                    Wise Address: <span style={{ color: 'white', float: 'right' }}>Rockads Reklam Anonim Sirketi</span>
+                    Recipient Address:{' '}
+                    <span style={{ color: 'white', float: 'right' }}>Parun Maantee 18, 10141, Tallinn, Estonia</span>
+                  </Typography>
+                  <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
+                    Bank Address: <span style={{ color: 'white', float: 'right' }}></span>
                   </Typography>
 
                   <Typography sx={{ color: 'text.secondary', marginBottom: '15px' }}>
-                    Rockads deos not make a direct debit form your account. You can make a <br />
+                    Uproas deos not make a direct debit form your account. You can make a <br />
                     money transfer for Rockads via internet banking or your bank's mobile <br />
                     application. Make sure that the account to which the transfer is made <br />
                     belongs to your company
@@ -612,11 +618,11 @@ const AdBalances = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
-              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
-                I made the transfer
-              </Button>
               <Button variant='outlined' color='secondary' onClick={() => setIsContinueToUp(false)}>
                 Cancel
+              </Button>
+              <Button variant='contained' sx={{ mr: 1 }} onClick={makeTransfer}>
+                I made the transfer
               </Button>
             </DialogActions>
           </Dialog>

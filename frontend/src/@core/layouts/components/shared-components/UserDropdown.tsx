@@ -13,6 +13,12 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+//component
+import { ThemeColor } from 'src/@core/layouts/types'
+import CustomAvatar from 'src/@core/components/mui/avatar'
+
+//utils
+import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -39,6 +45,7 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = (props: Props) => {
   // ** Props
   const { settings } = props
+  const auth = useAuth()
 
   // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
@@ -93,12 +100,13 @@ const UserDropdown = (props: Props) => {
           horizontal: 'right'
         }}
       >
-        <Avatar
-          alt='John Doe'
-          src='/images/avatars/1.png'
-          onClick={handleDropdownOpen}
-          sx={{ width: 40, height: 40 }}
-        />
+        <CustomAvatar
+          skin='light'
+          color={'info' as ThemeColor}
+          sx={{ mr: 3, width: 30, height: 30, fontSize: '.8rem', lineHeight: 1.5 }}
+        >
+          {getInitials(auth.user.username || 'Unknow')}
+        </CustomAvatar>
       </Badge>
       <Menu
         anchorEl={anchorEl}
@@ -118,18 +126,25 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <CustomAvatar
+                skin='light'
+                color={'info' as ThemeColor}
+                sx={{ mr: 3, width: 30, height: 30, fontSize: '.8rem', lineHeight: 1.5 }}
+              >
+                {getInitials(auth.user.username || 'Unknow')}
+              </CustomAvatar>
+              {/* <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} /> */}
             </Badge>
             <Box sx={{ ml: 3, display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 500 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 500 }}>{auth.user?.username}</Typography>
               <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                Admin
+                {auth.user.role}
               </Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ mt: '0 !important' }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
+        {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
           <Box sx={styles}>
             <Icon icon='bx:user' />
             Profile
@@ -165,7 +180,7 @@ const UserDropdown = (props: Props) => {
             <Icon icon='bx:help-circle' />
             FAQ
           </Box>
-        </MenuItem>
+        </MenuItem> */}
         <Divider />
         <MenuItem
           onClick={handleLogout}

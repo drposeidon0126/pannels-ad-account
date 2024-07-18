@@ -1,5 +1,6 @@
 // ** React Imports
 import { createContext, useEffect, useState, ReactNode } from 'react'
+import toast, { ToastBar } from 'react-hot-toast'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -76,19 +77,23 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
+        if (response.data.user.role === 'lead') {
+          toast.error('Your account was not allowed yet. Please wait...')
+        } else {
+          params.rememberMe
+            ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
+            : null
+          const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.user })
-        params.rememberMe
-          ? window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
-          : null
+          setUser({ ...response.data.user })
+          params.rememberMe
+            ? window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
+            : null
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
-        router.replace(redirectURL as string)
+          router.replace(redirectURL as string)
+        }
       })
 
       .catch(err => {
@@ -98,17 +103,21 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleRegister = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     axios
-      .post(authConfig.registerEndpoint, params)
+      .post(authConfig.registerEndpoint, { data: params })
       .then(async response => {
-        window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
-        const returnUrl = router.query.returnUrl
+        if (response.data.user.role === 'lead') {
+          toast.success('Sign Up successfully. Please wait until your account is approved.')
+        } else {
+          window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.access_token)
+          const returnUrl = router.query.returnUrl
 
-        setUser({ ...response.data.user })
-        window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
+          setUser({ ...response.data.user })
+          window.localStorage.setItem('userData', JSON.stringify({ ...response.data.user, password: undefined }))
 
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+          const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
-        router.replace(redirectURL as string)
+          router.replace(redirectURL as string)
+        }
       })
 
       .catch(err => {

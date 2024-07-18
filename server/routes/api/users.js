@@ -206,7 +206,7 @@ router.post("/login", validateLoginInput(), async (req, res) => {
     const payload = {
       user: {
         _id: user._id,
-        username: user.name,
+        username: user.username,
         email: user.email,
         password: user.password,
         role: user.role,

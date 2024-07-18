@@ -213,7 +213,7 @@ const ClientsList = () => {
   const [startDateRange, setStartDateRange] = useState<DateType>(null)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
   const [show, setShow] = useState<boolean>(false)
-  const [adplatform, setAdPlatform] = useState<'meta' | 'ticktok' | 'google'>('meta')
+  const [adplatform, setAdPlatform] = useState<'meta' | 'tiktok' | 'google'>('meta')
   const [currency, setCurrency] = useState<'usd' | 'eur' | 'try'>('usd')
   const [timeZone, setTimeZone] = useState<string>('')
   const [link, setLink] = useState<string>('')
@@ -271,7 +271,6 @@ const ClientsList = () => {
   }, [dispatch, value])
 
   const createNewUser = () => {
-    console.log(userData)
     const mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
     if (!userData.username) {
@@ -364,6 +363,19 @@ const ClientsList = () => {
 
   const updateClient = () => {
     dispatch(upateUser(userData))
+    setUserData({
+      _id: '',
+      username: '',
+      email: '',
+      password: '',
+      role: 'lead',
+      phonenumber: '',
+      companyanme: '',
+      country: '',
+      monthlyadspend: '',
+      goals: '',
+      adplatformt: ''
+    })
     setShowEdit(false)
   }
 
@@ -377,7 +389,7 @@ const ClientsList = () => {
       headerName: 'Actions',
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title='Delete Ad Acc'>
+          <Tooltip title='Delete'>
             <IconButton
               size='small'
               onClick={() => {
@@ -388,7 +400,7 @@ const ClientsList = () => {
               <Icon icon='bx:trash-alt' fontSize={20} />
             </IconButton>
           </Tooltip>
-          <Tooltip title='Edit Ad Acc'>
+          <Tooltip title='Edit'>
             <IconButton size='small' onClick={() => editUser(row)}>
               <EditIcon fontSize='small' />
             </IconButton>
@@ -660,19 +672,27 @@ const ClientsList = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label='Advertising Platform'
-                    placeholder='Advertising Platform'
-                    value={userData.adplatformt}
-                    onChange={e =>
-                      setUserData({
-                        ...userData,
-                        adplatformt: e.target.value
-                      })
-                    }
-                    required
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id='invoice-status-select'>Advertising Platform</InputLabel>
+                    <Select
+                      fullWidth
+                      value={userData.adplatformt}
+                      sx={{ mr: 4, mb: 2 }}
+                      label='Advertising Platform'
+                      onChange={e =>
+                        setUserData({
+                          ...userData,
+                          adplatformt: e.target.value
+                        })
+                      }
+                      labelId='invoice-status-select'
+                      required
+                    >
+                      <MenuItem value='meta'>Meta</MenuItem>
+                      <MenuItem value='tiktok'>TikTok</MenuItem>
+                      <MenuItem value='google'>Google</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
             </DialogContent>
@@ -684,6 +704,9 @@ const ClientsList = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
+              <Button variant='outlined' color='secondary' onClick={() => setShow(false)}>
+                Cancle
+              </Button>
               <Button
                 variant='contained'
                 sx={{ mr: 1 }}
@@ -700,9 +723,6 @@ const ClientsList = () => {
                 }
               >
                 Add User
-              </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setNextStep(false)}>
-                Cancle
               </Button>
             </DialogActions>
           </Dialog>
@@ -865,19 +885,27 @@ const ClientsList = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label='Advertising Platform'
-                    placeholder='Advertising Platform'
-                    value={userData.adplatformt}
-                    onChange={e =>
-                      setUserData({
-                        ...userData,
-                        adplatformt: e.target.value
-                      })
-                    }
-                    required
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel id='invoice-status-select'>Advertising Platform</InputLabel>
+                    <Select
+                      fullWidth
+                      value={userData.adplatformt}
+                      sx={{ mr: 4, mb: 2 }}
+                      label='Advertising Platform'
+                      onChange={e =>
+                        setUserData({
+                          ...userData,
+                          adplatformt: e.target.value
+                        })
+                      }
+                      labelId='invoice-status-select'
+                      required
+                    >
+                      <MenuItem value='meta'>Meta</MenuItem>
+                      <MenuItem value='tiktok'>TikTok</MenuItem>
+                      <MenuItem value='google'>Google</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
             </DialogContent>
@@ -889,6 +917,9 @@ const ClientsList = () => {
                 pb: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
               }}
             >
+              <Button variant='outlined' color='secondary' onClick={() => setShowEdit(false)}>
+                Cancle
+              </Button>
               <Button
                 variant='contained'
                 sx={{ mr: 1 }}
@@ -905,9 +936,6 @@ const ClientsList = () => {
                 }
               >
                 Update
-              </Button>
-              <Button variant='outlined' color='secondary' onClick={() => setShowEdit(false)}>
-                Cancle
               </Button>
             </DialogActions>
           </Dialog>

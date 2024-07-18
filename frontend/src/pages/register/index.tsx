@@ -25,6 +25,9 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import AuthIllustrationWrapper from 'src/views/pages/auth/AuthIllustrationWrapper'
+import Grid from '@mui/material/Grid'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 // ** Service Imports
 import * as authService from 'src/service/auth'
@@ -85,10 +88,17 @@ const Register = () => {
   const auth = useAuth()
 
   // ** States
-  const [userData, setUserData] = useState<UserInfo>({
+  const [userData, setUserData] = useState<any>({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'lead',
+    phonenumber: '',
+    companyanme: '',
+    country: '',
+    monthlyadspend: '',
+    goals: '',
+    adplatformt: ''
   })
 
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -115,11 +125,6 @@ const Register = () => {
       return false
     }
 
-    if (userData.password?.trim().length === 0) {
-      ToastBar.error('Please enter Password!')
-      return false
-    }
-
     if (userData.password?.trim().length > 0) {
       if (userData.password?.trim().length < 8) {
         toast.error('Password should be more than 8 characters!')
@@ -140,11 +145,23 @@ const Register = () => {
   const signUp = async () => {
     if (validation()) {
       auth.register(userData, err => {
-        if (err.response.data.email) {
+        if (err?.response?.data.email) {
           toast.error(err.response.data.email)
         } else {
           toast.error('Something went wrong!')
         }
+      })
+      setUserData({
+        username: '',
+        email: '',
+        password: '',
+        role: 'lead',
+        phonenumber: '',
+        companyanme: '',
+        country: '',
+        monthlyadspend: '',
+        goals: '',
+        adplatformt: ''
       })
     }
   }
@@ -194,34 +211,140 @@ const Register = () => {
               Rockads is not platform. It is a focused partner to grow your business
             </Typography> */}
             <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-              <TextField
-                autoFocus
-                fullWidth
-                id='username'
-                label='Username'
-                sx={{ mb: 4 }}
-                value={userData.username}
-                onChange={e =>
-                  setUserData({
-                    ...userData,
-                    username: e.target.value
-                  })
-                }
-              />
-              <TextField
-                fullWidth
-                type='email'
-                label='Email'
-                sx={{ mb: 4 }}
-                value={userData.email}
-                onChange={e =>
-                  setUserData({
-                    ...userData,
-                    email: e.target.value
-                  })
-                }
-              />
-              <FormControl fullWidth>
+              <Grid container spacing={6}>
+                <Grid item xs={6}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    id='username'
+                    label='Full Name'
+                    sx={{ mb: 4 }}
+                    value={userData.username}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        username: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label='Phone Number'
+                    placeholder='+2332343343'
+                    value={userData.phonenumber}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        phonenumber: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label='Email'
+                    placeholder='client@test.com'
+                    value={userData.email}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        email: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label='Company Name'
+                    placeholder='Company Name'
+                    value={userData.companyanme}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        companyanme: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label='Country/Region'
+                    placeholder='Country/Region'
+                    value={userData.country}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        country: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label='Monthly Advertising Spend'
+                    placeholder='Monthly Advertising Spend'
+                    value={userData.monthlyadspend}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        monthlyadspend: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id='invoice-status-select'>Advertising Platform</InputLabel>
+                    <Select
+                      fullWidth
+                      value={userData.adplatformt}
+                      sx={{ mr: 4, mb: 2 }}
+                      label='Advertising Platform'
+                      onChange={e =>
+                        setUserData({
+                          ...userData,
+                          adplatformt: e.target.value
+                        })
+                      }
+                      labelId='invoice-status-select'
+                      required
+                    >
+                      <MenuItem value='meta'>Meta</MenuItem>
+                      <MenuItem value='tiktok'>TikTok</MenuItem>
+                      <MenuItem value='google'>Google</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label='Goals'
+                    placeholder='Goals'
+                    value={userData.goals}
+                    onChange={e =>
+                      setUserData({
+                        ...userData,
+                        goals: e.target.value
+                      })
+                    }
+                    required
+                  />
+                </Grid>
+              </Grid>
+              {/* <FormControl fullWidth style={{ marginTop: '20px' }}>
                 <InputLabel htmlFor='auth-register-password'>Password</InputLabel>
                 <OutlinedInput
                   label='Password'
@@ -247,7 +370,7 @@ const Register = () => {
                     </InputAdornment>
                   }
                 />
-              </FormControl>
+              </FormControl> */}
               <FormControlLabel
                 control={<Checkbox name='agree' id='agree' checked={isAgree} onChange={e => setIsAgree(!isAgree)} />}
                 sx={{
@@ -264,7 +387,25 @@ const Register = () => {
                   </>
                 }
               />
-              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 4 }} onClick={signUp}>
+
+              <Button
+                fullWidth
+                size='large'
+                type='submit'
+                variant='contained'
+                sx={{ mb: 4 }}
+                onClick={signUp}
+                disabled={
+                  !userData.username ||
+                  !userData.phonenumber ||
+                  !userData.role ||
+                  !userData.email ||
+                  !userData.companyanme ||
+                  !userData.country ||
+                  !userData.monthlyadspend ||
+                  !userData.adplatformt
+                }
+              >
                 Sign up
               </Button>
               <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>

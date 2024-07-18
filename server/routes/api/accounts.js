@@ -20,7 +20,7 @@ const Account = require("../../models/Account");
 const User = require("../../models/User");
 
 router.post("/create/", async (req, res) => {
-    const { name, currency, link, platform, timezone, userId, bmId, facebookOne, facebookTwo} = req.body;
+    const {  currency, link, platform, timezone, userId, bmId, facebookOne, facebookTwo} = req.body;
   
     try {
       // Find the latest account
@@ -28,12 +28,13 @@ router.post("/create/", async (req, res) => {
   
       // Determine the new ID
       const newId = latestAccount ? latestAccount.id + 1 : 4000;
+      const newName = latestAccount ? latestAccount.name + 1 : 1
   
       // Create a new account with the determined ID
       const account = new Account({
         id: newId,
         bmId: bmId,
-        name: name,
+        name: newName,
         currency: currency,
         link: link,
         platform: platform,
@@ -124,11 +125,10 @@ router.get("/:id/user", auth, async (req, res) => {
 });
 
 router.put("/update", async (req, res) => {
-  const { _id, name, currency, status, bmId,  platform, timezone, link, facebookOne, facebookTwo} = req.body;
+  const { _id,  currency, status, bmId,  platform, timezone, link, facebookOne, facebookTwo} = req.body;
   try {
     let account = await Account.findById(_id);
     if (account) {
-      account.name = name;
       account.currency = currency;
       account.status = status;
       account.bmId = bmId;

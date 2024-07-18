@@ -16,7 +16,7 @@ const AccountSchema = new Schema({
     required: true
   },
   name: {
-    type: String,
+    type: Number,
     required: true,
   },
   platform: {
